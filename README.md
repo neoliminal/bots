@@ -10,6 +10,13 @@ sandboxed workspace, collaborates with your other Bots, and delivers finished wo
 Files live locally on your machine — that's the source of truth. Compute is
 disposable: a session spins up when a task needs a shell and goes away when it's done.
 
+![The Bots desktop app: bot list, conversation, and detail panel](docs/design/screenshots/chat-detail-panel.png)
+
+*Three columns: your Bots on the left, the conversation in the middle, and the
+selected Bot's context on the right — capability card, routines, and anything
+waiting on you. Here the EA has delegated account research to Scout, and the
+delegation card in the thread shows the handoff resolving to `DONE`.*
+
 ---
 
 ## Highlights
@@ -39,6 +46,13 @@ required.
 The visual language follows from that: a light-first, three-column layout with
 monochrome chrome, where all the color comes from the Bot avatars and their
 ink-outlined eyes carry the expression. See `docs/design/visual-style.md`.
+
+![Avatar states: idle, thinking, working, talking to you, talking to another bot, waiting on you, handing off, error, sleeping, celebrating, connection lost](docs/design/screenshots/avatar-gallery.png)
+
+*The avatars carry state. Rather than a status badge or a spinner, a Bot's
+condition reads off its eyes — thinking, working, waiting on you, handing off,
+sleeping, or offline. Gaze rides the curved surface of the ball, and the Bot
+whose thread is open tracks your cursor noticeably harder than the rest.*
 
 ## Repository layout
 
@@ -87,6 +101,11 @@ npm run build          # tsc && vite build
 
 An OpenRouter API key goes in `keys/.env` (`OPENROUTER_API_KEY=...`) in the repo root
 or any parent directory. That path is gitignored; keys never land in the repo.
+
+![First run: an empty bot list with a "Create your first Bot" call to action](docs/design/screenshots/empty-state.png)
+
+*First run. Creating a Bot is a short prefilled flow — pick a role and the rest is
+suggested, per the pillar above.*
 
 ## Testing
 
