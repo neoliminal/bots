@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* Light-first theme (docs/design/visual-style.md): white surfaces,
+   #f2f2f7-family grays, near-black text. Dark stays supported via
+   prefers-color-scheme but light is canonical. */
+
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-color: #ffffff;
+  color: #1c1c1e;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--color-neutral-950);
+    color: #f2f2f7;
+  }
+}

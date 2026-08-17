@@ -1,0 +1,11 @@
+# Secrets — never commit. Local keys live in keys/ (see openspec/project.md conventions).
+keys/
+.env
+.env.*
+*.env
+
+# macOS
+.DS_Store
+
+# Dependencies
+node_modules/

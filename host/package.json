@@ -1,0 +1,13 @@
+{
+  "name": "bots-host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bots personal-host runtime: provisioning + DOM-driven browse daemon for a user-owned machine.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

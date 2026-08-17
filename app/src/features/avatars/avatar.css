@@ -1,0 +1,234 @@
+/* Bot avatar — pure SVG + CSS animation. GPU-friendly: transforms/opacity only. */
+
+.bot-avatar {
+  display: inline-block;
+  line-height: 0;
+  transition: opacity 300ms ease, filter 300ms ease;
+}
+
+.bot-avatar svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Every transformed SVG group animates around its own box center. */
+.bot-avatar .av-motion,
+.bot-avatar .av-tilt,
+.bot-avatar .av-eyes,
+.bot-avatar .av-eye,
+.bot-avatar .av-blinkable,
+.bot-avatar .av-pose,
+.bot-avatar .av-confetti,
+.bot-avatar .av-zzz {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* State transitions cross-fade / ease within 1 s. */
+.bot-avatar .av-tilt {
+  transition: transform 350ms ease;
+}
+/* Eye position and shape are tweened in JS (useEasedPose): one target that
+   the current pose always travels toward. Deliberately NO CSS transition on
+   these — a transition restarts from wherever it is each time the value
+   changes, so layering one over a per-frame tween double-smooths the motion
+   into mush and fights the delay line. */
+.bot-avatar .av-blinkable {
+  transition: transform 90ms ease;
+}
+
+/* ---------- keyframes ---------- */
+
+@keyframes av-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.5%); }
+}
+
+@keyframes av-wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes av-vibrate {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(0.6%, -0.4%); }
+  50% { transform: translate(-0.5%, 0.5%); }
+  75% { transform: translate(0.5%, 0.4%); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes av-bounce {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  30% { transform: translateY(-7%) scale(0.98, 1.03); }
+  60% { transform: translateY(0) scale(1.02, 0.97); }
+}
+
+@keyframes av-hop {
+  0%, 62%, 100% { transform: translateY(0) scale(1, 1); }
+  68% { transform: translateY(0) scale(1.05, 0.92); }
+  76% { transform: translateY(-9%) scale(0.97, 1.05); }
+  86% { transform: translateY(0) scale(1.03, 0.96); }
+  92% { transform: translateY(0) scale(1, 1); }
+}
+
+@keyframes av-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2.2%); }
+  75% { transform: translateX(2.2%); }
+}
+
+@keyframes av-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.045, 0.955); }
+}
+
+@keyframes av-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+
+@keyframes av-celebrate {
+  0% { transform: translateY(0) scale(1, 1); }
+  18% { transform: translateY(1%) scale(1.12, 0.85); }
+  45% { transform: translateY(-16%) scale(0.94, 1.1) rotate(-4deg); }
+  70% { transform: translateY(0) scale(1.06, 0.92) rotate(2deg); }
+  85% { transform: translateY(-3%) scale(0.99, 1.02); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
+@keyframes av-confetti-burst {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0.4); opacity: 1; }
+  70% { opacity: 1; }
+  100% {
+    transform: translate(var(--cfx, 0px), var(--cfy, -30px)) rotate(var(--cfr, 200deg)) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes av-zzz-float {
+  0% { transform: translate(0, 0); opacity: 0; }
+  25% { opacity: 0.9; }
+  100% { transform: translate(7px, -14px); opacity: 0; }
+}
+
+/* ---------- per-state motion ----------
+   --av-phase (negative random s) + --av-durx (0.85–1.15) are set inline per
+   instance so no two avatars ever animate in lockstep. */
+
+.av-state-idle .av-motion {
+  animation: av-bob calc(3.8s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-thinking .av-tilt { transform: rotate(-8deg); }
+.av-state-thinking .av-motion {
+  animation: av-wobble calc(3.4s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-working .av-motion {
+  animation: av-vibrate calc(0.22s * var(--av-durx, 1)) linear infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-talkingToUser .av-motion {
+  animation: av-bounce calc(0.72s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-talkingToBot .av-tilt { transform: rotate(var(--av-lean, 8deg)); }
+.av-state-talkingToBot .av-motion {
+  animation: av-pulse calc(0.8s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-waitingOnUser .av-motion {
+  animation: av-hop calc(2.6s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-handoff .av-tilt {
+  transform: translateX(var(--av-nudge, 4%)) rotate(var(--av-lean, 6deg));
+}
+.av-state-handoff .av-motion {
+  animation: av-pulse calc(1.1s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+/* Error: a brief startled shake (3 cycles, ~1 s), then the ball settles
+   still while the eyes hold the determined squint. No animation-delay here:
+   the shake must actually play from mount, and it must not loop forever. */
+.av-state-error .av-motion {
+  animation: av-shake calc(0.34s * var(--av-durx, 1)) linear 3;
+}
+.av-state-error.av-error-settled .av-motion {
+  animation: none;
+}
+
+.av-state-sleeping .av-motion {
+  transform-origin: 50% 100%;
+  animation: av-breathe calc(3.6s * var(--av-durx, 1)) ease-in-out infinite;
+  animation-delay: var(--av-phase, 0s);
+}
+
+.av-state-celebrating .av-motion {
+  animation: av-celebrate 0.9s ease-out 1;
+}
+
+/* Disconnected: dimmed, no liveness. */
+.av-dim {
+  filter: grayscale(0.7);
+  opacity: 0.55;
+}
+
+/* ---------- eyes ---------- */
+
+/* Blink: the stroke collapses along its height to a dot/short line and back.
+   Applied on a wrapper so it composes with the pose's own morph transform. */
+.bot-avatar .av-eyes.av-blink .av-blinkable {
+  transform: scaleY(0.1);
+}
+
+/* ---------- detail props ---------- */
+
+.bot-avatar .av-confetti {
+  animation: av-confetti-burst 0.9s ease-out forwards;
+}
+
+.bot-avatar .av-zzz {
+  animation: av-zzz-float calc(2.6s * var(--av-durx, 1)) ease-in infinite;
+  animation-delay: var(--zd, 0s);
+  opacity: 0;
+}
+
+/* ---------- pause when offscreen / document hidden ---------- */
+
+.av-paused .av-motion,
+.av-paused .av-confetti,
+.av-paused .av-zzz {
+  animation-play-state: paused;
+}
+
+/* ---------- reduced motion: static poses, gentle cross-fades only ---------- */
+
+.av-rm .av-motion,
+.av-rm .av-confetti,
+.av-rm .av-zzz {
+  animation: none !important;
+}
+.av-rm .av-zzz {
+  opacity: 0.6; /* keep the sleeping cue without the float */
+}
+.av-rm .av-tilt,
+.av-rm .av-eyes,
+.av-rm .av-eye,
+.av-rm .av-pose,
+.av-rm .av-stroke,
+.av-rm .av-blinkable {
+  transition: none;
+}
+.av-rm,
+.av-rm * {
+  transition-property: opacity, filter;
+  transition-duration: 300ms;
+}
